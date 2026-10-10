@@ -19,8 +19,7 @@ def _is_data_analysis_request(task: str) -> bool:
 
 
 def _find_csv_filename(task: str) -> str | None:
-    # Match only the filename token, not the words before it (e.g. "Analyze ").
-    # Filenames with underscores and hyphens are supported.
+    
     match = re.search(r"(?i)([A-Za-z0-9_-]+\.csv)\b", task)
     if match:
         return Path(match.group(1).strip("'\"`.,;:!?()[]{}")).name
@@ -48,7 +47,7 @@ async def run_workflow(task: str, model_name: str = "llama3.2:3b") -> dict[str, 
     tool_map = {tool.name: tool for tool in tools}
     events: list[str] = []
 
-    # Deterministic routing: never send CSV analysis expressions to calculate().
+    
     if _is_data_analysis_request(task) and "run_sales_analysis_workflow" in tool_map:
         filename = _find_csv_filename(task)
         if not filename:
